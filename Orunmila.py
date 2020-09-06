@@ -1,5 +1,4 @@
 from requests_html import AsyncHTMLSession
-from time import time, sleep
 from typing import Dict, List
 
 
@@ -33,7 +32,6 @@ class Orunmila:
         for pMetadata in gitlabPlatResponse:
             self.projectsMetadata.append(pMetadata)
         #
-        # print(self._pagesCount)
         self._pagesCount += 1
 
     #
@@ -61,4 +59,4 @@ class Orunmila:
 if __name__ == "__main__":
     orun = Orunmila("https://invent.kde.org")
     orun.getAllProjectMetadata()
-    orun.projectsMetadata[0]
+    # orun.projectsMetadata[0]
