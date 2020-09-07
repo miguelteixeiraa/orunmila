@@ -10,9 +10,11 @@ class Orunmila:
         # do not stop the loop on self.getAllProjectMetadata()
         self._dontStopLoop = True
         self._pagesCount = 0
+        
+        # raw data
+        self.projectsMetadata = list()
 
         # **start** Orunmila knows
-        self.projectsMetadata = list()
         self._commitsByYear = dict()
         self._numberOfProjects = 0
         # **end## Orunmila knows
