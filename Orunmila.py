@@ -72,12 +72,15 @@ class Orunmila:
     #
 
     def getAllCommitsMetadata(self) -> List:
-        result = dict()
         for project in self.projectsMetadata:
             self._projectCurrentTd = project["id"]
             self._orunSession.run(self._getCommitsMetadata)
+        #
+        
         # cleanup
         del self._projectCurrentTd
+        
+        return self.projectCommitsMetadata
 
     #
 
