@@ -76,6 +76,7 @@ class Orunmila:
         for project in self.projectsMetadata:
             self._projectCurrentTd = project["id"]
             self._orunSession.run(self._getCommitsMetadata)
+        # cleanup
         del self._projectCurrentTd
 
     #
