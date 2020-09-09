@@ -1,5 +1,6 @@
 from requests_html import AsyncHTMLSession
 from typing import Dict, List
+from json import dumps
 
 
 class Orunmila:
@@ -10,9 +11,10 @@ class Orunmila:
         # do not stop the loop on self.getAllProjectMetadata()
         self._dontStopLoop = True
         self._pagesCount = 0
-        
+
         # raw data
         self.projectsMetadata = list()
+        self.projectCommitsMetadata = list()
 
         # **start** Orunmila knows
         self._commitsByYear = dict()
@@ -21,6 +23,7 @@ class Orunmila:
 
     #
 
+    # secondary method
     async def _getProjectMetadata(self) -> None:
         gitlabPlatResponse = await self._orunSession.get(
             f"{self._gitlabAddress}/api/v4/projects?&per_page=100&page={self._pagesCount}"
@@ -31,14 +34,30 @@ class Orunmila:
             return
         #
 
-        for pMetadata in gitlabPlatResponse:
-            self.projectsMetadata.append(pMetadata)
+        for pMetadata in gitlabPlatResponse.json():
+            self.projectsMetadata.append(dict(pMetadata))
         #
         self._pagesCount += 1
 
     #
 
-    def getAllProjectMetadata(self) -> List:
+    # secondary method
+    async def _getCommitsMetadata(self) -> None:
+        gitlabPlatResponse = await self._orunSession.get(
+            f"{self._gitlabAddress}/api/v4/projects/{self._projectCurrentTd}/repository/commits"
+        )
+
+        if gitlabPlatResponse.json() == None or gitlabPlatResponse.json() == []:
+            return
+        #
+
+        for pCommit in gitlabPlatResponse.json():
+            self.projectCommitsMetadata.append(dict(pCommit))
+        #
+
+    #
+
+    def getAllProjectsMetadata(self) -> List:
         while self._dontStopLoop:
             self._orunSession.run(self._getProjectMetadata)
         #
@@ -52,13 +71,18 @@ class Orunmila:
 
     #
 
-    def getCommitsByYear(self) -> Dict:
-        pass
+    def getAllCommitsMetadata(self) -> List:
+        result = dict()
+        for project in self.projectsMetadata:
+            self._projectCurrentTd = project["id"]
+            self._orunSession.run(self._getCommitsMetadata)
+        del self._projectCurrentTd
 
     #
 
 
 if __name__ == "__main__":
     orun = Orunmila("https://invent.kde.org")
-    orun.getAllProjectMetadata()
+    orun.getAllProjectsMetadata()
+    orun.getAllCommitsMetadata()
     # orun.projectsMetadata[0]
