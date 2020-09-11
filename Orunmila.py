@@ -5,7 +5,7 @@ from json import dumps
 
 class Orunmila:
     def __init__(self, gitlabAddress: str) -> None:
-        self._orunSession = AsyncHTMLSession()
+        self._orunSession = AsyncHTMLSession(workers=20)
         self._gitlabAddress = gitlabAddress
 
         # do not stop the loop on self.getAllProjectMetadata()
