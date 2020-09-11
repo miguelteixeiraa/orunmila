@@ -43,28 +43,27 @@ class Orunmila:
 
     # secondary method
     async def _getCommitsMetadata(self) -> None:
+        pageCount = 0
         gitlabPlatResponse = await self._orunSession.get(
-            f"{self._gitlabAddress}/api/v4/projects/{self._projectCurrentTd}/repository/commits?&per_page=300"
+            f"{self._gitlabAddress}/api/v4/projects/{self._projectCurrentTd}/repository/commits?&per_page=100&page={pageCount}"
         )
-
-        if gitlabPlatResponse.json() == None or gitlabPlatResponse.json() == []:
-            return
-        #
-
-        print(f"getting data of project {self._projectCurrentTd}")
-
-        counter = 0  # debug parallelism
-        for pCommit in gitlabPlatResponse.json():
-            try:
-                self.projectCommitsMetadata.append(dict(pCommit))
-                counter += 1
-                print(counter)
-            except ValueError as error:
-                print(
-                    f"Error getting commits: {error}, on repository id: {self._projectCurrentTd}"
-                )
+        while gitlabPlatResponse.json() != []:
+            tmp_gitlabPlatResponse = gitlabPlatResponse.json()
+            for pCommit in tmp_gitlabPlatResponse:
+                try:
+                    self.projectCommitsMetadata.append(dict(pCommit))
+                except ValueError as error:
+                    print(
+                        f"Error getting commits: {error}, on repository id: {self._projectCurrentTd}"
+                    )
+                #
             #
+            pageCount += 1
+            gitlabPlatResponse = await self._orunSession.get(
+                f"{self._gitlabAddress}/api/v4/projects/{self._projectCurrentTd}/repository/commits?&per_page=100&page={pageCount}"
+            )
         #
+        print(f"getting data of project {self._projectCurrentTd}")
 
     #
 
