@@ -99,4 +99,3 @@ if __name__ == "__main__":
     orun = Orunmila("https://invent.kde.org")
     orun.getAllProjectsMetadata()
     orun.getAllCommitsMetadata()
-    # orun.projectsMetadata[0]
